@@ -26,5 +26,8 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.1.3"
   }
 }

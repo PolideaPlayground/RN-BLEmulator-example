@@ -14,7 +14,10 @@ import {
   View,
   Text,
   StatusBar,
+  Button,
 } from 'react-native';
+
+import {Blemulator} from 'react-native-blemulator';
 
 import {
   Header,
@@ -24,7 +27,13 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+const testBlemulator: () => void = () => {
+//   const blemulator = new Blemulator();
+//   blemulator.runNativeToJsCommunicationTest();
+};
+
 const App: () => React$Node = () => {
+  console.log('run once');
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -39,6 +48,7 @@ const App: () => React$Node = () => {
             </View>
           )}
           <View style={styles.body}>
+            <Button title="Test" onPress={testBlemulator} />
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>Step One</Text>
               <Text style={styles.sectionDescription}>

@@ -1,4 +1,4 @@
-package com.blemulatorexample;
+package com.polidea.blemulatorexample;
 
 import com.facebook.react.ReactActivity;
 

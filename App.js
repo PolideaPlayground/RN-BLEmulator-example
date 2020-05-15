@@ -17,7 +17,7 @@ import {
   Button,
 } from 'react-native';
 
-import {Blemulator} from 'react-native-blemulator';
+// import {Blemulator} from 'react-native-blemulator';
 
 import {
   Header,
@@ -28,6 +28,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 const testBlemulator: () => void = () => {
+    console.log("blemulator test");
 //   const blemulator = new Blemulator();
 //   blemulator.runNativeToJsCommunicationTest();
 };

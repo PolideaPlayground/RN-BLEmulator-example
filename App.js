@@ -8,29 +8,28 @@
 
 import React from 'react';
 import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
   Button,
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
-
-// import {Blemulator} from 'react-native-blemulator';
-
 import {
-  Header,
-  LearnMoreLinks,
   Colors,
   DebugInstructions,
+  Header,
+  LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+// import {Blemulator} from 'react-native-blemulator';
+
+
 const testBlemulator: () => void = () => {
-    console.log("blemulator test");
-//   const blemulator = new Blemulator();
-//   blemulator.runNativeToJsCommunicationTest();
+  const blemulator = new Blemulator();
+  blemulator.runNativeToJsCommunicationTest();
 };
 
 const App: () => React$Node = () => {

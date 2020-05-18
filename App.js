@@ -24,10 +24,11 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-// import {Blemulator} from 'react-native-blemulator';
+import {Blemulator} from 'react-native-blemulator';
 
 
 const testBlemulator: () => void = () => {
+    console.log("blemulator test");
   const blemulator = new Blemulator();
   blemulator.runNativeToJsCommunicationTest();
 };

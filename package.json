@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "echo 'removing node_modules/ from react-native-blemulator'; rm -rf node_modules/react-native-blemulator/node_modules/"
   },
   "dependencies": {
     "react": "16.11.0",

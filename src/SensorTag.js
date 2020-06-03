@@ -24,6 +24,13 @@ import {
 import {Device} from 'react-native-ble-plx';
 import {SensorTagTests, type SensorTagTestMetadata} from './Tests';
 
+import {blemulator, Blemulator} from 'react-native-blemulator';
+
+const testBlemulator: () => void = () => {
+  console.log('blemulator test');
+  blemulator.runNativeToJsCommunicationTest();
+};
+
 const Button = function (props) {
   const {onPress, title, ...restProps} = props;
   return (
@@ -143,6 +150,12 @@ class SensorTag extends Component<Props, State> {
               this.props.forgetSensorTag();
             }}
             title={'Forget'}
+          />
+        </View>
+        <View style={{flexDirection: 'row', paddingTop: 5}}>
+          <Button
+            title="Test native->js method calling"
+            onPress={testBlemulator}
           />
         </View>
       </View>

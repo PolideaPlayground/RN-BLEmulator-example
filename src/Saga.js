@@ -34,8 +34,13 @@ import {
 } from 'react-native-ble-plx';
 import {SensorTagTests} from './Tests';
 
+import {blemulator, Blemulator} from 'react-native-blemulator';
+
 export function* bleSaga(): Generator<*, *, *> {
   yield put(log('BLE saga started...'));
+
+  // Turn on BLEmulator
+  yield blemulator.simulate();
 
   // First step is to create BleManager which should be used as an entry point
   // to all BLE related functionalities

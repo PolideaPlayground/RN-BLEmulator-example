@@ -48,9 +48,10 @@ export function* bleSaga(): Generator<*, *, *> {
   manager.setLogLevel(LogLevel.Verbose);
 
   // All below generators are described below...
-  yield fork(handleScanning, manager);
-  yield fork(handleBleState, manager);
-  yield fork(handleConnection, manager);
+//   yield fork(handleScanning, manager);
+//   yield fork(handleBleState, manager);
+//   yield fork(handleConnection, manager);
+    yield fork(scan, manager); //TODO remove this; temporary workaround for testing scanning
 }
 
 // This generator tracks our BLE state. Based on that we can enable scanning, get rid of devices etc.

@@ -40,7 +40,17 @@ function setupPeripheral() {
   blemulator.addPeripheral(
     new SimulatedPeripheral({
       name: 'SensorTag',
-      id: 'test id',
+      id: 'test id 1',
+      advertisementInterval: 500,
+      localName: 'SensorTag',
+      services: [],
+    }),
+  );
+
+  blemulator.addPeripheral(
+    new SimulatedPeripheral({
+      name: 'SensorTag',
+      id: 'test id 2',
       advertisementInterval: 500,
       localName: 'SensorTag',
       services: [],

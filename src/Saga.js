@@ -34,12 +34,35 @@ import {
 } from 'react-native-ble-plx';
 import {SensorTagTests} from './Tests';
 
-import {blemulator, Blemulator} from 'react-native-blemulator';
+import {blemulator, Blemulator, SimulatedPeripheral} from 'react-native-blemulator';
+
+function setupPeripheral() {
+  blemulator.addPeripheral(
+    new SimulatedPeripheral({
+      name: 'SensorTag',
+      id: 'test id 1',
+      advertisementInterval: 500,
+      localName: 'SensorTag',
+      services: [],
+    }),
+  );
+
+  blemulator.addPeripheral(
+    new SimulatedPeripheral({
+      name: 'SensorTag',
+      id: 'test id 2',
+      advertisementInterval: 500,
+      localName: 'SensorTag',
+      services: [],
+    }),
+  );
+}
 
 export function* bleSaga(): Generator<*, *, *> {
   yield put(log('BLE saga started...'));
 
   // Turn on BLEmulator
+  setupPeripheral();
   yield blemulator.simulate();
 
   // First step is to create BleManager which should be used as an entry point
@@ -51,7 +74,7 @@ export function* bleSaga(): Generator<*, *, *> {
 //   yield fork(handleScanning, manager);
 //   yield fork(handleBleState, manager);
 //   yield fork(handleConnection, manager);
-    yield fork(scan, manager); //TODO remove this; temporary workaround for testing scanning
+  yield fork(scan, manager); //TODO remove this; temporary workaround for testing scanning
 }
 
 // This generator tracks our BLE state. Based on that we can enable scanning, get rid of devices etc.

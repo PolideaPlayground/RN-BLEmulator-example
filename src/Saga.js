@@ -51,7 +51,7 @@ function setupPeripheral() {
     new SimulatedPeripheral({
       name: 'SensorTag',
       id: 'test id 2',
-      advertisementInterval: 500,
+      advertisementInterval: 600,
       localName: 'SensorTag',
       services: [],
     }),
@@ -73,7 +73,7 @@ export function* bleSaga(): Generator<*, *, *> {
   // All below generators are described below...
 //   yield fork(handleScanning, manager);
 //   yield fork(handleBleState, manager);
-//   yield fork(handleConnection, manager);
+  yield fork(handleConnection, manager);
   yield fork(scan, manager); //TODO remove this; temporary workaround for testing scanning
 }
 
@@ -238,7 +238,7 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
       yield put(updateConnectionState(ConnectionState.CONNECTING));
       yield call([device, device.connect]);
       yield put(updateConnectionState(ConnectionState.DISCOVERING));
-      yield call([device, device.discoverAllServicesAndCharacteristics]);
+    //   yield call([device, device.discoverAllServicesAndCharacteristics]);
       yield put(updateConnectionState(ConnectionState.CONNECTED));
 
       for (;;) {

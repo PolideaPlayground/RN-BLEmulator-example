@@ -32,6 +32,10 @@ export type DisconnectAction = {|
   type: 'DISCONNECT',
 |};
 
+export type LoseConnectionAction = {|
+  type: 'LOSE_CONNECTION',
+|};
+
 export type UpdateConnectionStateAction = {|
   type: 'UPDATE_CONNECTION_STATE',
   state: $Keys<typeof ConnectionState>,
@@ -133,6 +137,12 @@ export function updateConnectionState(
 export function disconnect(): DisconnectAction {
   return {
     type: 'DISCONNECT',
+  };
+}
+
+export function loseConnection(): LoseConnectionAction {
+  return {
+    type: 'LOSE_CONNECTION',
   };
 }
 

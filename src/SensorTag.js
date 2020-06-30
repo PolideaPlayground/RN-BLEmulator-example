@@ -21,6 +21,8 @@ import {
   forgetSensorTag,
   ConnectionState,
   loseConnection,
+  simToggleRadio,
+  toggleRadio,
 } from './Reducer';
 import {Device} from 'react-native-ble-plx';
 import {SensorTagTests, type SensorTagTestMetadata} from './Tests';
@@ -49,6 +51,8 @@ type Props = {
   disconnect: typeof disconnect,
   executeTest: typeof executeTest,
   loseConnection: typeof loseConnection,
+  simToggleRadio: typeof simToggleRadio,
+  toggleRadio: typeof toggleRadio,
   currentTest: ?string,
   forgetSensorTag: typeof forgetSensorTag,
 };
@@ -149,9 +153,24 @@ class SensorTag extends Component<Props, State> {
         </View>
         <View style={{flexDirection: 'row', paddingTop: 5}}>
           <Button
-            title="Simulate losing connection"
+            title="SIM toggle radio"
+            style={{flex: 1}}
+            onPress={() => this.props.simToggleRadio()}
+          />
+          <View style={{width: 5}} />
+          <Button
+            title="[A] toggle radio"
+            style={{flex: 1}}
+            onPress={() => this.props.toggleRadio()}
+          />
+        </View>
+        <View style={{flexDirection: 'row', paddingTop: 5}}>
+          <Button
+            title="SIM lose connection"
+            style={{flex: 1}}
             onPress={() => this.props.loseConnection()}
           />
+          <View style={{width: 5}} />
         </View>
       </View>
     );
@@ -297,5 +316,7 @@ export default reduxConnect(
     forgetSensorTag,
     executeTest,
     loseConnection,
+    simToggleRadio,
+    toggleRadio,
   },
 )(SensorTag);

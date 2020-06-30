@@ -35,6 +35,7 @@ import {
 import {SensorTagTests} from './Tests';
 
 import {blemulator, SimulatedPeripheral} from 'react-native-blemulator';
+import { AdapterState } from 'react-native-blemulator/src/types';
 
 const peripheral1: SimulatedPeripheral = new SimulatedPeripheral({
   name: 'SensorTag',
@@ -70,10 +71,10 @@ export function* bleSaga(): Generator<*, *, *> {
   manager.setLogLevel(LogLevel.Verbose);
 
   // All below generators are described below...
-//   yield fork(handleScanning, manager);
-//   yield fork(handleBleState, manager);
+  yield fork(handleScanning, manager);
+  yield fork(handleBleState, manager);
   yield fork(handleConnection, manager);
-  yield fork(scan, manager); //TODO remove this; temporary workaround for testing scanning
+  yield fork(toggleRadio, manager);
 
   yield fork(handleBlemulatorActions);
 }
@@ -239,7 +240,7 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
       yield put(updateConnectionState(ConnectionState.CONNECTING));
       yield call([device, device.connect]);
       yield put(updateConnectionState(ConnectionState.DISCOVERING));
-    //   yield call([device, device.discoverAllServicesAndCharacteristics]);
+    //   yield call([device, device.discoverAllServicesAndCharacteristics]); // TODO uncomment
       yield put(updateConnectionState(ConnectionState.CONNECTED));
 
       for (;;) {
@@ -279,16 +280,46 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
   }
 }
 
+function* toggleRadio(manager: BleManager): Generator<*, *, *> {
+  //Anroid only
+  const toggleRadioActionChannel = yield actionChannel(['TOGGLE_RADIO']);
+  for (;;) {
+    const action = yield take(toggleRadioActionChannel);
+
+    if (action.type === 'TOGGLE_RADIO') {
+      const state = yield call([manager, manager.state]);
+      if (state === State.PoweredOn) {
+        yield call([manager, manager.disable]);
+      } else {
+        yield call([manager, manager.enable]);
+      }
+    }
+  }
+}
+
 function* handleBlemulatorActions(): Generator<*, *, *> {
-  const blemulatorActionChannel = yield actionChannel(['LOSE_CONNECTION']);
+  const blemulatorActionChannel = yield actionChannel([
+    'SIM_LOSE_CONNECTION',
+    'SIM_TOGGLE_RADIO',
+  ]);
+
   for (;;) {
     const action = yield take(blemulatorActionChannel);
-    if (action.type == 'LOSE_CONNECTION') {
-      if (peripheral1.isConnected()) {
-        peripheral1.onDisconnect({emit: true});
-      } else if (peripheral2.isConnected()) {
-        peripheral2.onDisconnect({emit: true});
-      }
+    switch (action.type) {
+      case 'SIM_LOSE_CONNECTION':
+        if (peripheral1.isConnected()) {
+          peripheral1.onDisconnect({emit: true});
+        } else if (peripheral2.isConnected()) {
+          peripheral2.onDisconnect({emit: true});
+        }
+        break;
+      case 'SIM_TOGGLE_RADIO':
+        if (blemulator.getSimulatedAdapterState() === AdapterState.POWERED_ON) {
+          blemulator.setSimulatedAdapterState(AdapterState.POWERED_OFF);
+        } else {
+          blemulator.setSimulatedAdapterState(AdapterState.POWERED_ON);
+        }
+        break;
     }
   }
 }

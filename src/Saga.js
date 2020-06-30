@@ -285,9 +285,9 @@ function* handleBlemulatorActions(): Generator<*, *, *> {
     const action = yield take(blemulatorActionChannel);
     if (action.type == 'LOSE_CONNECTION') {
       if (peripheral1.isConnected()) {
-        peripheral1.onDisconnect();
+        peripheral1.onDisconnect({emit: true});
       } else if (peripheral2.isConnected()) {
-        peripheral2.onDisconnect();
+        peripheral2.onDisconnect({emit: true});
       }
     }
   }

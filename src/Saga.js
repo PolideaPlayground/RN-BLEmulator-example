@@ -34,28 +34,27 @@ import {
 } from 'react-native-ble-plx';
 import {SensorTagTests} from './Tests';
 
-import {blemulator, Blemulator, SimulatedPeripheral} from 'react-native-blemulator';
+import {blemulator, SimulatedPeripheral} from 'react-native-blemulator';
+
+const peripheral1: SimulatedPeripheral = new SimulatedPeripheral({
+  name: 'SensorTag',
+  id: 'test id 1',
+  advertisementInterval: 500,
+  localName: 'SensorTag',
+  services: [],
+});
+
+const peripheral2: SimulatedPeripheral = new SimulatedPeripheral({
+  name: 'SensorTag',
+  id: 'test id 2',
+  advertisementInterval: 600,
+  localName: 'SensorTag',
+  services: [],
+});
 
 function setupPeripheral() {
-  blemulator.addPeripheral(
-    new SimulatedPeripheral({
-      name: 'SensorTag',
-      id: 'test id 1',
-      advertisementInterval: 500,
-      localName: 'SensorTag',
-      services: [],
-    }),
-  );
-
-  blemulator.addPeripheral(
-    new SimulatedPeripheral({
-      name: 'SensorTag',
-      id: 'test id 2',
-      advertisementInterval: 600,
-      localName: 'SensorTag',
-      services: [],
-    }),
-  );
+  blemulator.addPeripheral(peripheral1);
+  blemulator.addPeripheral(peripheral2);
 }
 
 export function* bleSaga(): Generator<*, *, *> {
@@ -63,7 +62,7 @@ export function* bleSaga(): Generator<*, *, *> {
 
   // Turn on BLEmulator
   setupPeripheral();
-  yield blemulator.simulate();
+  yield call([blemulator, blemulator.simulate]);
 
   // First step is to create BleManager which should be used as an entry point
   // to all BLE related functionalities
@@ -75,6 +74,8 @@ export function* bleSaga(): Generator<*, *, *> {
 //   yield fork(handleBleState, manager);
   yield fork(handleConnection, manager);
   yield fork(scan, manager); //TODO remove this; temporary workaround for testing scanning
+
+  yield fork(handleBlemulatorActions);
 }
 
 // This generator tracks our BLE state. Based on that we can enable scanning, get rid of devices etc.
@@ -274,6 +275,20 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
       disconnectedChannel.close();
       yield put(testFinished());
       yield put(updateConnectionState(ConnectionState.DISCONNECTED));
+    }
+  }
+}
+
+function* handleBlemulatorActions(): Generator<*, *, *> {
+  const blemulatorActionChannel = yield actionChannel(['LOSE_CONNECTION']);
+  for (;;) {
+    const action = yield take(blemulatorActionChannel);
+    if (action.type == 'LOSE_CONNECTION') {
+      if (peripheral1.isConnected()) {
+        peripheral1.onDisconnect({emit: true});
+      } else if (peripheral2.isConnected()) {
+        peripheral2.onDisconnect({emit: true});
+      }
     }
   }
 }

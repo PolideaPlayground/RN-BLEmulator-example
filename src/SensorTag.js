@@ -20,16 +20,10 @@ import {
   executeTest,
   forgetSensorTag,
   ConnectionState,
+  loseConnection,
 } from './Reducer';
 import {Device} from 'react-native-ble-plx';
 import {SensorTagTests, type SensorTagTestMetadata} from './Tests';
-
-import {blemulator, Blemulator} from 'react-native-blemulator';
-
-const testBlemulator: () => void = () => {
-  console.log('blemulator test');
-  blemulator.runNativeToJsCommunicationTest();
-};
 
 const Button = function (props) {
   const {onPress, title, ...restProps} = props;
@@ -54,6 +48,7 @@ type Props = {
   connect: typeof connect,
   disconnect: typeof disconnect,
   executeTest: typeof executeTest,
+  loseConnection: typeof loseConnection,
   currentTest: ?string,
   forgetSensorTag: typeof forgetSensorTag,
 };
@@ -154,8 +149,8 @@ class SensorTag extends Component<Props, State> {
         </View>
         <View style={{flexDirection: 'row', paddingTop: 5}}>
           <Button
-            title="Test native->js method calling"
-            onPress={testBlemulator}
+            title="Simulate losing connection"
+            onPress={() => this.props.loseConnection()}
           />
         </View>
       </View>
@@ -301,5 +296,6 @@ export default reduxConnect(
     disconnect,
     forgetSensorTag,
     executeTest,
+    loseConnection,
   },
 )(SensorTag);

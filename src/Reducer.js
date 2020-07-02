@@ -33,7 +33,7 @@ export type DisconnectAction = {|
 |};
 
 export type LoseConnectionAction = {|
-  type: 'LOSE_CONNECTION',
+  type: 'SIM_LOSE_CONNECTION',
 |};
 
 export type UpdateConnectionStateAction = {|
@@ -62,6 +62,14 @@ export type ExecuteTestAction = {|
 
 export type TestFinishedAction = {|
   type: 'TEST_FINISHED',
+|};
+
+export type ToggleRadioAction = {|
+  type: 'TOGGLE_RADIO',
+|};
+
+export type SimToggleRadioAction = {|
+  type: 'SIM_TOGGLE_RADIO',
 |};
 
 export type ReduxState = {
@@ -142,7 +150,7 @@ export function disconnect(): DisconnectAction {
 
 export function loseConnection(): LoseConnectionAction {
   return {
-    type: 'LOSE_CONNECTION',
+    type: 'SIM_LOSE_CONNECTION',
   };
 }
 
@@ -178,6 +186,18 @@ export function executeTest(id: string): ExecuteTestAction {
 export function testFinished(): TestFinishedAction {
   return {
     type: 'TEST_FINISHED',
+  };
+}
+
+export function simToggleRadio(): SimToggleRadioAction {
+  return {
+    type: 'SIM_TOGGLE_RADIO',
+  };
+}
+
+export function toggleRadio(): ToggleRadioAction {
+  return {
+    type: 'TOGGLE_RADIO',
   };
 }
 

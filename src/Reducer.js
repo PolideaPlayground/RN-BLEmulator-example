@@ -72,6 +72,10 @@ export type SimToggleRadioAction = {|
   type: 'SIM_TOGGLE_RADIO',
 |};
 
+export type RequestMtuAction = {|
+  type: 'REQUEST_MTU',
+|};
+
 export type ReduxState = {
   logs: Array<string>,
   activeError: ?BleError,
@@ -176,6 +180,12 @@ export function forgetSensorTag(): ForgetSensorTagAction {
   };
 }
 
+export function requestMtu(): RequestMtuAction {
+  return {
+    type: 'REQUEST_MTU',
+  };
+}
+
 export function executeTest(id: string): ExecuteTestAction {
   return {
     type: 'EXECUTE_TEST',
@@ -207,6 +217,7 @@ export function reducer(
 ): ReduxState {
   switch (action.type) {
     case 'LOG':
+      console.debug(action.message)
       return {...state, logs: [action.message, ...state.logs]};
     case 'CLEAR_LOGS':
       return {...state, logs: []};

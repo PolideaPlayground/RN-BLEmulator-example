@@ -234,6 +234,7 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
     const deviceActionChannel = yield actionChannel([
       'DISCONNECT',
       'EXECUTE_TEST',
+      'REQUEST_MTU'
     ]);
 
     try {
@@ -261,6 +262,11 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
               yield cancel(testTask);
             }
             testTask = yield fork(executeTest, device, deviceAction);
+          }
+          if (deviceAction.type === 'REQUEST_MTU') {
+            yield put(log('Request MTU 124'));
+            var negotiatedMtu = yield call([device, device.requestMTU], 124);
+            yield put(log('Negotiated mtu: ' + negotiatedMtu.mtu));
           }
         } else if (disconnected) {
           yield put(log('Disconnected by device...'));

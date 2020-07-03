@@ -180,13 +180,6 @@ class SensorTag extends Component<Props, State> {
           />
           <View style={{width: 5}} />
         </View>
-        <View style={{flexDirection: 'row', paddingTop: 5}}>
-          <Button
-            title="Test native->js method calling"
-            onPress={testBlemulator}
-          />
-          <View style={{width: 5}} />
-        </View>
       </View>
     );
   }

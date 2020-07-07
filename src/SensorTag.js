@@ -171,7 +171,6 @@ class SensorTag extends Component<Props, State> {
             title="SIM lose connection"
             style={{flex: 1}}
             onPress={() => this.props.loseConnection()}
-            disabled={!this.isSensorTagReadyToExecuteTests()}
             style={{flex: 1}}
             onPress={() => {
               this.props.requestMtu();

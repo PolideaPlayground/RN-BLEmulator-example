@@ -280,7 +280,7 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
       yield put(updateConnectionState(ConnectionState.CONNECTING));
       yield call([device, device.connect]);
       yield put(updateConnectionState(ConnectionState.DISCOVERING));
-      yield call([device, device.discoverAllServicesAndCharacteristics]); // TODO uncomment
+      yield call([device, device.discoverAllServicesAndCharacteristics]);
       yield put(updateConnectionState(ConnectionState.CONNECTED));
 
       for (;;) {

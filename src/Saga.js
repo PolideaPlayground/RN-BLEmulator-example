@@ -34,24 +34,64 @@ import {
 } from 'react-native-ble-plx';
 import {SensorTagTests} from './Tests';
 
-import {blemulator, SimulatedPeripheral} from 'react-native-blemulator';
-import { AdapterState } from 'react-native-blemulator/src/types';
+import {
+  blemulator,
+  SimulatedPeripheral,
+  SimulatedService,
+  SimulatedCharacteristic,
+  SimulatedDescriptor,
+} from 'react-native-blemulator';
+import {AdapterState} from 'react-native-blemulator/src/types';
 
-const peripheral1: SimulatedPeripheral = new SimulatedPeripheral({
-  name: 'SensorTag',
-  id: 'test id 1',
-  advertisementInterval: 500,
-  localName: 'SensorTag',
-  services: [],
-});
+const createPeripheral: (
+  id: string,
+  advertisementInterval: number,
+) => SimulatedPeripheral = (id, advertisementInterval) => {
+  return new SimulatedPeripheral({
+    name: 'SensorTag',
+    id: id,
+    advertisementInterval: advertisementInterval,
+    localName: 'SensorTag',
+    services: [
+      new SimulatedService({
+        uuid: 'F000AA00-0451-4000-B000-000000000000',
+        isAdvertised: true,
+        convenienceName: 'Temperature service',
+        characteristics: [
+          new SimulatedCharacteristic({
+            uuid: 'F000AA01-0451-4000-B000-000000000000',
+            initialValue: 'AA==',
+            convenienceName: 'IR Temperature Data',
+            descriptors: [
+              new SimulatedDescriptor({
+                uuid: '00002901-0000-1000-8000-00805f9b34fb',
+                convenienceName: 'Client characteristic configuration',
+              }),
+              new SimulatedDescriptor({
+                uuid: '00002902-0000-1000-8000-00805f9b34fb',
+                convenienceName: 'Characteristic user description',
+              }),
+            ],
+          }),
+          new SimulatedCharacteristic({
+            uuid: 'F000AA02-0451-4000-B000-000000000000',
+            initialValue: 'AA==',
+            convenienceName: 'IR Temperature Config',
+          }),
+          new SimulatedCharacteristic({
+            uuid: 'F000AA03-0451-4000-B000-000000000000',
+            initialValue: 'AA==',
+            convenienceName: 'IR Temperature Period',
+          }),
+        ],
+      }),
+    ],
+  });
+};
 
-const peripheral2: SimulatedPeripheral = new SimulatedPeripheral({
-  name: 'SensorTag',
-  id: 'test id 2',
-  advertisementInterval: 600,
-  localName: 'SensorTag',
-  services: [],
-});
+const peripheral1: SimulatedPeripheral = createPeripheral('test id 1', 500);
+
+const peripheral2: SimulatedPeripheral = createPeripheral('test id 2', 600);
 
 function setupPeripheral() {
   blemulator.addPeripheral(peripheral1);
@@ -240,7 +280,7 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
       yield put(updateConnectionState(ConnectionState.CONNECTING));
       yield call([device, device.connect]);
       yield put(updateConnectionState(ConnectionState.DISCOVERING));
-    //   yield call([device, device.discoverAllServicesAndCharacteristics]); // TODO uncomment
+      yield call([device, device.discoverAllServicesAndCharacteristics]);
       yield put(updateConnectionState(ConnectionState.CONNECTED));
 
       for (;;) {

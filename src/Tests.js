@@ -52,14 +52,14 @@ function* readAllCharacteristics(device: Device): Generator<*, boolean, *> {
 
         for (const descriptor of descriptors) {
           yield put(log('* Found descriptor: ' + descriptor.uuid));
-          const d: Descriptor = yield call([descriptor, descriptor.read]);
-          yield put(log('Descriptor value: ' + (d.value || 'null')));
-          if (d.uuid === '00002902-0000-1000-8000-00805f9b34fb') {
-            yield put(log('Skipping CCC'));
-            continue;
-          }
+        //   const d: Descriptor = yield call([descriptor, descriptor.read]);
+        //   yield put(log('Descriptor value: ' + (d.value || 'null')));
+        //   if (d.uuid === '00002902-0000-1000-8000-00805f9b34fb') {
+        //     yield put(log('Skipping CCC'));
+        //     continue;
+        //   }
           try {
-            yield call([descriptor, descriptor.write], 'AAA=');
+            // yield call([descriptor, descriptor.write], 'AAA=');
           } catch (error) {
             const bleError: BleError = error;
             if (bleError.errorCode === BleErrorCode.DescriptorWriteFailed) {
@@ -73,13 +73,13 @@ function* readAllCharacteristics(device: Device): Generator<*, boolean, *> {
         yield put(log('Found characteristic: ' + characteristic.uuid));
         if (characteristic.isReadable) {
           yield put(log('Reading value...'));
-          var c = yield call([characteristic, characteristic.read]);
-          yield put(log('Got base64 value: ' + c.value));
+        //   var c = yield call([characteristic, characteristic.read]);
+        //   yield put(log('Got base64 value: ' + c.value));
           if (characteristic.isWritableWithResponse) {
-            yield call(
-              [characteristic, characteristic.writeWithResponse],
-              c.value,
-            );
+            // yield call(
+            //   [characteristic, characteristic.writeWithResponse],
+            //   c.value,
+            // );
             yield put(log('Successfully written value back'));
           }
         }

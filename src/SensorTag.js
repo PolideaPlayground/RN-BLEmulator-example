@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 // @flow
 
 import React, {Component} from 'react';
@@ -23,7 +24,8 @@ import {
   loseConnection,
   simToggleRadio,
   toggleRadio,
-  requestMtu
+  requestMtu,
+  testNotifications,
 } from './Reducer';
 import {Device} from 'react-native-ble-plx';
 import {SensorTagTests, type SensorTagTestMetadata} from './Tests';
@@ -57,6 +59,7 @@ type Props = {
   currentTest: ?string,
   forgetSensorTag: typeof forgetSensorTag,
   requestMtu: typeof requestMtu,
+  testNotifications: typeof testNotifications,
 };
 
 type State = {
@@ -174,9 +177,16 @@ class SensorTag extends Component<Props, State> {
           />
           <View style={{width: 5}} />
           <Button
-            title='Request MTU'
+            title="Request MTU"
             style={{flex: 1}}
             onPress={() => this.props.requestMtu()}
+          />
+        </View>
+        <View style={{flexDirection: 'row', paddingTop: 5}}>
+          <Button
+            title="Send notifications"
+            style={{flex: 1}}
+            onPress={() => this.props.testNotifications()}
           />
         </View>
       </View>
@@ -325,6 +335,7 @@ export default reduxConnect(
     loseConnection,
     simToggleRadio,
     toggleRadio,
-    requestMtu
+    requestMtu,
+    testNotifications,
   },
 )(SensorTag);

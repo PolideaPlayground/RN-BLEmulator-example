@@ -171,12 +171,13 @@ class SensorTag extends Component<Props, State> {
             title="SIM lose connection"
             style={{flex: 1}}
             onPress={() => this.props.loseConnection()}
-            onPress={() => {
-              this.props.requestMtu();
-            }}
-            title={'Request MTU'}
           />
           <View style={{width: 5}} />
+          <Button
+            title='Request MTU'
+            style={{flex: 1}}
+            onPress={() => this.props.requestMtu()}
+          />
         </View>
       </View>
     );

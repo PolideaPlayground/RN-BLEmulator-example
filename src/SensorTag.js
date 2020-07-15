@@ -23,6 +23,7 @@ import {
   loseConnection,
   simToggleRadio,
   toggleRadio,
+  requestMtu
 } from './Reducer';
 import {Device} from 'react-native-ble-plx';
 import {SensorTagTests, type SensorTagTestMetadata} from './Tests';
@@ -55,6 +56,7 @@ type Props = {
   toggleRadio: typeof toggleRadio,
   currentTest: ?string,
   forgetSensorTag: typeof forgetSensorTag,
+  requestMtu: typeof requestMtu,
 };
 
 type State = {
@@ -171,6 +173,11 @@ class SensorTag extends Component<Props, State> {
             onPress={() => this.props.loseConnection()}
           />
           <View style={{width: 5}} />
+          <Button
+            title='Request MTU'
+            style={{flex: 1}}
+            onPress={() => this.props.requestMtu()}
+          />
         </View>
       </View>
     );
@@ -318,5 +325,6 @@ export default reduxConnect(
     loseConnection,
     simToggleRadio,
     toggleRadio,
+    requestMtu
   },
 )(SensorTag);

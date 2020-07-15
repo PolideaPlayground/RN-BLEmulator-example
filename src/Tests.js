@@ -73,8 +73,11 @@ function* readAllCharacteristics(device: Device): Generator<*, boolean, *> {
         yield put(log('Found characteristic: ' + characteristic.uuid));
         if (characteristic.isReadable) {
           yield put(log('Reading value...'));
-          var c = yield call([characteristic, characteristic.read]);
-          yield put(log('Got base64 value: ' + c.value));
+          let readCharacteristic = yield call([
+            characteristic,
+            characteristic.read,
+          ]);
+          yield put(log('Got base64 value: ' + readCharacteristic.value));
           if (characteristic.isWritableWithResponse) {
             // yield call(
             //   [characteristic, characteristic.writeWithResponse],

@@ -76,6 +76,10 @@ export type RequestMtuAction = {|
   type: 'REQUEST_MTU',
 |};
 
+export type TestNotificationsAction = {|
+  type: 'TEST_NOTIFICATIONS',
+|};
+
 export type ReduxState = {
   logs: Array<string>,
   activeError: ?BleError,
@@ -211,13 +215,19 @@ export function toggleRadio(): ToggleRadioAction {
   };
 }
 
+export function testNotifications(): TestNotificationsAction {
+  return {
+    type: 'TEST_NOTIFICATIONS',
+  };
+}
+
 export function reducer(
   state: ReduxState = initialState,
   action: Action,
 ): ReduxState {
   switch (action.type) {
     case 'LOG':
-      console.debug(action.message)
+      console.debug(action.message);
       return {...state, logs: [action.message, ...state.logs]};
     case 'CLEAR_LOGS':
       return {...state, logs: []};

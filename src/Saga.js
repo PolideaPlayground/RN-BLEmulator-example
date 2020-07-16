@@ -3,6 +3,7 @@
 import {PermissionsAndroid, Platform} from 'react-native';
 import {buffers, eventChannel} from 'redux-saga';
 import {
+  delay,
   fork,
   cancel,
   take,
@@ -31,63 +32,22 @@ import {
   Device,
   State,
   LogLevel,
+  Characteristic,
 } from 'react-native-ble-plx';
 import {SensorTagTests} from './Tests';
 
 import {
   blemulator,
   SimulatedPeripheral,
-  SimulatedService,
   SimulatedCharacteristic,
-  SimulatedDescriptor,
+  AdapterState,
 } from 'react-native-blemulator';
-import {AdapterState} from 'react-native-blemulator/src/types';
 
-const createPeripheral: (
-  id: string,
-  advertisementInterval: number,
-) => SimulatedPeripheral = (id, advertisementInterval) => {
-  return new SimulatedPeripheral({
-    name: 'SensorTag',
-    id: id,
-    advertisementInterval: advertisementInterval,
-    localName: 'SensorTag',
-    services: [
-      new SimulatedService({
-        uuid: 'F000AA00-0451-4000-B000-000000000000',
-        isAdvertised: true,
-        convenienceName: 'Temperature service',
-        characteristics: [
-          new SimulatedCharacteristic({
-            uuid: 'F000AA01-0451-4000-B000-000000000000',
-            initialValue: 'AA==',
-            convenienceName: 'IR Temperature Data',
-            descriptors: [
-              new SimulatedDescriptor({
-                uuid: '00002901-0000-1000-8000-00805f9b34fb',
-                convenienceName: 'Client characteristic configuration',
-              }),
-              new SimulatedDescriptor({
-                uuid: '00002902-0000-1000-8000-00805f9b34fb',
-                convenienceName: 'Characteristic user description',
-              }),
-            ],
-          }),
-          new SimulatedCharacteristic({
-            uuid: 'F000AA02-0451-4000-B000-000000000000',
-            initialValue: 'AA==',
-            convenienceName: 'IR Temperature Config',
-          }),
-          new SimulatedCharacteristic({
-            uuid: 'F000AA03-0451-4000-B000-000000000000',
-            initialValue: 'AA==',
-            convenienceName: 'IR Temperature Period',
-          }),
-        ],
-      }),
-    ],
-  });
-};
+import {
+  createPeripheral,
+  TEMPERATURE_SERVICE_UUID,
+  TEMPERATURE_DATA_CHARACTERISTIC_UUID,
+} from './ExamplePeripheral';
 
 const peripheral1: SimulatedPeripheral = createPeripheral('test id 1', 500);
 
@@ -274,7 +234,7 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
     const deviceActionChannel = yield actionChannel([
       'DISCONNECT',
       'EXECUTE_TEST',
-      'REQUEST_MTU'
+      'REQUEST_MTU',
     ]);
 
     try {
@@ -283,6 +243,17 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
       yield put(updateConnectionState(ConnectionState.DISCOVERING));
       yield call([device, device.discoverAllServicesAndCharacteristics]);
       yield put(updateConnectionState(ConnectionState.CONNECTED));
+
+      yield put(log('Setting up notifications...'));
+
+      yield call(
+        [device, device.monitorCharacteristicForService],
+        TEMPERATURE_SERVICE_UUID,
+        TEMPERATURE_DATA_CHARACTERISTIC_UUID,
+        listener,
+        'test',
+      );
+      yield put(log('Set up notifications!'));
 
       for (;;) {
         const {deviceAction, disconnected} = yield race({
@@ -347,6 +318,7 @@ function* handleBlemulatorActions(): Generator<*, *, *> {
   const blemulatorActionChannel = yield actionChannel([
     'SIM_LOSE_CONNECTION',
     'SIM_TOGGLE_RADIO',
+    'TEST_NOTIFICATIONS',
   ]);
 
   for (;;) {
@@ -366,8 +338,52 @@ function* handleBlemulatorActions(): Generator<*, *, *> {
           blemulator.setSimulatedAdapterState(AdapterState.POWERED_ON);
         }
         break;
+      case 'TEST_NOTIFICATIONS':
+        yield fork(testNotifications);
+        break;
     }
   }
+}
+
+function* testNotifications(): Generator<*, *, *> {
+  console.log('Testing notifications');
+  let peripheral: SimulatedPeripheral = null;
+  if (peripheral1.isConnected()) {
+    peripheral = peripheral1;
+  } else if (peripheral2.isConnected()) {
+    peripheral = peripheral2;
+  }
+  if (peripheral == null) {
+    return;
+  }
+
+  const characteristic: SimulatedCharacteristic = peripheral.getCharacteristicForService(
+    TEMPERATURE_SERVICE_UUID,
+    TEMPERATURE_DATA_CHARACTERISTIC_UUID,
+  );
+  console.log(
+    `Tested characteristic ${characteristic.uuid} from service ${characteristic.service.uuid}`,
+  );
+  yield delay(500);
+  yield call([characteristic, characteristic.write], 'AA==', {
+    sendNotification: true,
+  });
+  yield delay(500);
+  yield call([characteristic, characteristic.write], 'AQ==', {
+    sendNotification: true,
+  });
+  yield delay(500);
+  yield call([characteristic, characteristic.write], 'AA==', {
+    sendNotification: true,
+  });
+  yield delay(500);
+  yield call([characteristic, characteristic.write], 'AQ==', {
+    sendNotification: true,
+  });
+  yield delay(500);
+  yield call([characteristic, characteristic.write], 'AA==', {
+    sendNotification: true,
+  });
 }
 
 function* executeTest(
@@ -386,3 +402,20 @@ function* executeTest(
   }
   yield put(testFinished());
 }
+
+const listener: (error: ?BleError, characteristic: ?Characteristic) => void = (
+  error,
+  characteristic,
+) => {
+  if (error) {
+    console.warn(error.message);
+  } else {
+    let message: string = 'empty message';
+    if (characteristic && characteristic.value) {
+      message = characteristic.value;
+    } else {
+      message = 'null';
+    }
+    console.log(`Notification: ${message}`);
+  }
+};

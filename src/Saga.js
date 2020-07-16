@@ -361,7 +361,9 @@ function* testNotifications(): Generator<*, *, *> {
     TEMPERATURE_SERVICE_UUID,
     TEMPERATURE_DATA_CHARACTERISTIC_UUID,
   );
-  console.log(`Tested characteristic ${characteristic}`);
+  console.log(
+    `Tested characteristic ${characteristic.uuid} from service ${characteristic.service.uuid}`,
+  );
   yield delay(500);
   yield call([characteristic, characteristic.write], 'AA==', {
     sendNotification: true,

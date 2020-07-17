@@ -79,10 +79,10 @@ function* readAllCharacteristics(device: Device): Generator<*, boolean, *> {
           ]);
           yield put(log('Got base64 value: ' + readCharacteristic.value));
           if (characteristic.isWritableWithResponse) {
-            // yield call(
-            //   [characteristic, characteristic.writeWithResponse],
-            //   c.value,
-            // );
+            yield call(
+              [characteristic, characteristic.writeWithResponse],
+              readCharacteristic.value,
+            );
             yield put(log('Successfully written value back'));
           }
         }

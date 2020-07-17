@@ -52,18 +52,23 @@ function* readAllCharacteristics(device: Device): Generator<*, boolean, *> {
 
         for (const descriptor of descriptors) {
           yield put(log('* Found descriptor: ' + descriptor.uuid));
-        //   const d: Descriptor = yield call([descriptor, descriptor.read]);
-        //   yield put(log('Descriptor value: ' + (d.value || 'null')));
-        //   if (d.uuid === '00002902-0000-1000-8000-00805f9b34fb') {
-        //     yield put(log('Skipping CCC'));
-        //     continue;
-        //   }
+          const readDescriptor: Descriptor = yield call([
+            descriptor,
+            descriptor.read,
+          ]);
+          yield put(
+            log('Descriptor value: ' + (readDescriptor.value || 'null')),
+          );
+          if (readDescriptor.uuid === '00002902-0000-1000-8000-00805f9b34fb') {
+            yield put(log('Skipping CCC'));
+            continue;
+          }
           try {
             // yield call([descriptor, descriptor.write], 'AAA=');
           } catch (error) {
             const bleError: BleError = error;
             if (bleError.errorCode === BleErrorCode.DescriptorWriteFailed) {
-              yield put(log('Cannot write to: ' + d.uuid));
+              yield put(log('Cannot write to: ' + descriptor.uuid));
             } else {
               throw error;
             }

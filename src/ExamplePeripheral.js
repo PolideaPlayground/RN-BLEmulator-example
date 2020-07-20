@@ -36,10 +36,12 @@ export const createPeripheral: (
               new SimulatedDescriptor({
                 uuid: '00002901-0000-1000-8000-00805f9b34fb',
                 convenienceName: 'Client characteristic configuration',
+                initialValue: 'AA==',
               }),
               new SimulatedDescriptor({
                 uuid: '00002902-0000-1000-8000-00805f9b34fb',
                 convenienceName: 'Characteristic user description',
+                initialValue: 'AA==',
               }),
             ],
           }),

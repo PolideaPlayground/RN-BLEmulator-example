@@ -52,6 +52,7 @@ function* readAllCharacteristics(device: Device): Generator<*, boolean, *> {
 
         for (const descriptor of descriptors) {
           yield put(log('* Found descriptor: ' + descriptor.uuid));
+          yield put(log('Reading descriptor...'));
           const readDescriptor: Descriptor = yield call([
             descriptor,
             descriptor.read,
@@ -64,7 +65,9 @@ function* readAllCharacteristics(device: Device): Generator<*, boolean, *> {
             continue;
           }
           try {
-            // yield call([descriptor, descriptor.write], 'AAA=');
+            yield put(log('Writing to descriptor...'));
+            yield call([descriptor, descriptor.write], readDescriptor.value);
+            yield put(log('Descriptor write successful'));
           } catch (error) {
             const bleError: BleError = error;
             if (bleError.errorCode === BleErrorCode.DescriptorWriteFailed) {

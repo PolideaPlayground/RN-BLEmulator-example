@@ -64,7 +64,7 @@ function* readAllCharacteristics(device: Device): Generator<*, boolean, *> {
             continue;
           }
           try {
-            // yield call([descriptor, descriptor.write], 'AAA=');
+            yield call([descriptor, descriptor.write], readDescriptor.value);
           } catch (error) {
             const bleError: BleError = error;
             if (bleError.errorCode === BleErrorCode.DescriptorWriteFailed) {

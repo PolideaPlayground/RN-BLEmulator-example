@@ -246,6 +246,19 @@ function* handleConnection(manager: BleManager): Generator<*, *, *> {
 
       yield put(log('Setting up notifications...'));
 
+      const peripherals: Array<Device> = yield call(
+        [manager, manager.connectedDevices],
+        ['F000AA00-0451-4000-B000-000000000000'],
+      );
+
+      peripherals.forEach((peripheral) =>
+        console.log(
+          `Connected peripheral: ${peripheral.id} ${
+            peripheral.name ? peripheral.name : '<no name>'
+          }`,
+        ),
+      );
+
       yield call(
         [device, device.monitorCharacteristicForService],
         TEMPERATURE_SERVICE_UUID,

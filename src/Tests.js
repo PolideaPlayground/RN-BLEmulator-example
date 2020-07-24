@@ -93,6 +93,7 @@ function* readAllCharacteristics(device: Device): Generator<*, boolean, *> {
               [characteristic, characteristic.writeWithResponse],
               readCharacteristic.value,
             );
+
             yield put(log('Successfully written value back'));
           }
         }

@@ -390,9 +390,13 @@ function* testNotifications(): Generator<*, *, *> {
     sendNotification: true,
   });
   yield delay(500);
-  yield call([characteristic, characteristic.write], 'AQ==', {
-    sendNotification: true,
-  });
+  yield call(
+    [characteristic, characteristic.write],
+    'ABCDEFGHIJABCDEFGHIJABCDEFGHIJAB', //Should trigger a trimming of notification on default MTU on Android
+    {
+      sendNotification: true,
+    },
+  );
   yield delay(500);
   yield call([characteristic, characteristic.write], 'AA==', {
     sendNotification: true,

@@ -32,6 +32,8 @@ export const SensorTagTests: {[string]: SensorTagTestMetadata} = {
 
 function* readAllCharacteristics(device: Device): Generator<*, boolean, *> {
   try {
+    const rssiDevice: Device = yield call([device, device.readRSSI]);
+    yield put(log(`Read RSSI: ${rssiDevice.rssi}`));
     const services: Array<Service> = yield call([device, device.services]);
     for (const service of services) {
       yield put(log('Found service: ' + service.uuid));
